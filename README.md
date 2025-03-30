@@ -5,7 +5,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/guruvishal1005/CyberScan-1005.svg)](https://github.com/guruvishal1005/CyberScan-1005/stargazers)
 [![GitHub issues](https://img.shields.io/github/issues/guruvishal1005/CyberScan-1005.svg)](https://github.com/guruvishal1005/CyberScan-1005/issues)
 
-A **fast**, **multi-threaded** port scanner built in Python to check open ports on a target IP address within a specified range.
+A **fast**, **multi-threaded** port scanner built in Python to check open ports on a target IP address within a specified range. 
 
 ```python
    _____      _               _____                   __  ___   ___  _____ 
@@ -29,6 +29,26 @@ A **fast**, **multi-threaded** port scanner built in Python to check open ports 
 - **Lightweight & easy to use** (no external dependencies)
 
 ---
+
+## 🤷‍♂️ Why I Built This (A Teenager's Honest Confession)
+
+Look, I'm just a college cybersecurity noob who:
+
+1. **Needed street cred** - Wanted to impress my Discord hacking group (they weren't impressed)  
+2. **Got tired of NMAP** - "But can you make your own scanner?" Challenge accepted!  
+3. **Misunderstood 'network penetration testing'** - Turns out my router doesn't count as "enterprise infrastructure"  
+4. **Wanted to feel cool** - Black terminal > GUI any day (until you get 100 connection timeouts)  
+
+*"My professor said 'think outside the box'... so I built a box scanner instead."*  
+
+⚠️ **Disclaimer**:  
+This tool may:  
+- Make you look 1337 in front of non-tech friends  
+- Annoy your home router  
+- Not actually help with your networking homework (but try telling that to my GitHub commits)  
+
+Built with ❤️, caffeine, and questionable life choices.
+
 
 ## ⚙️ Installation
 ```bash

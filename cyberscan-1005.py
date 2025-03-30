@@ -1,3 +1,8 @@
+# This is a simple multi-thread port scanner
+# Checks the open ports of a given IP address in the specific port range
+# Built using socket library
+# For multithreading purpose we use Thread library
+
 import socket
 import ipaddress
 import threading
@@ -61,26 +66,36 @@ target=input("Enter target IP: ")
 while not is_valid_ip(target):
     target=input("Enter a valid target IP again: ")
 
+# Getting 2 port range from user 
 port1 = int(input("Enter the starting port to scan: "))
 port2 = int(input("Enter the ending port to scan: "))
 while not(port1>0 and port2> 0 and port1<port2):
+    # Checking if the entered port is valid and obeys the conditions
     print("Invalid port entries!! Retry")
     port1 = int(input("Enter the starting port to scan: "))
     port2 = int(input("Enter the ending port to scan: "))
 
+# Feeding the queue with ports withing given range
 fill_queue(port1,port2)
 
+# This will contain the threads we create
 thread_list=[]
 
+# Change the range inside the for loop, to specify the amount of threads you want to use
+# I'm using 10 threads because it felt faster
+# This loop is to create the threads and feed it to thread_list 
 for t in range(10):
     thread = threading.Thread(target=worker)
     thread_list.append(thread)
 
+# Start all the threads
 for thread in thread_list:
     thread.start()
 
+# Join all the threads
 for thread in thread_list:
     thread.join()
 
+# Print the final list of all open ports for quick view
 print("Open Ports are:", open_ports)
 

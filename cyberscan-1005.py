@@ -8,11 +8,14 @@ import ipaddress
 import threading
 from queue import Queue
 
-
+# Using queue for increased efficiency
 queue = Queue()
+# Store open Ports
 open_ports=[]
 
 
+# check if user entered IP is valid
+# We use ipaddress library 
 def is_valid_ip(target):
     try:
         ipaddress.ip_address(target)
@@ -20,6 +23,9 @@ def is_valid_ip(target):
     except ValueError:
         return False
 
+# This is the heart, the mind everything
+# This thing scans for open port
+# We'll be using socket to help us out
 def portscan(port):
     try:
         sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -28,10 +34,13 @@ def portscan(port):
     except:
         return False
 
+# This is used to fill the queue of ports to scan from the user inputed range
 def fill_queue(from_port,to_port):
     for i in range(from_port,to_port+1):
         queue.put(i)
 
+
+# This guy here will check if each port is open or not and append the answer to the final list
 def worker():
     while not queue.empty():
         port = queue.get()
@@ -45,6 +54,7 @@ def worker():
 
 #main
 
+# Banner
 print(r"""
 
    _____      _               _____                   __  ___   ___  _____ 
@@ -61,19 +71,27 @@ print(r"""
 GitHub  : https://github.com/guruvishal1005
 LinkedIn: https://www.linkedin.com/in/guruvishal-sr/
 """)
+print()
+print()
 
+# To get target IP
 target=input("Enter target IP: ")
+print()
 while not is_valid_ip(target):
     target=input("Enter a valid target IP again: ")
+    print()
 
 # Getting 2 port range from user 
 port1 = int(input("Enter the starting port to scan: "))
 port2 = int(input("Enter the ending port to scan: "))
+print()
 while not(port1>0 and port2> 0 and port1<port2):
     # Checking if the entered port is valid and obeys the conditions
-    print("Invalid port entries!! Retry")
+    print("Invalid port entries!! (Port must be > 0 && starting port > ending port) Retry")
+    print()
     port1 = int(input("Enter the starting port to scan: "))
     port2 = int(input("Enter the ending port to scan: "))
+    print()
 
 # Feeding the queue with ports withing given range
 fill_queue(port1,port2)

@@ -1,21 +1,14 @@
-# This is a simple multi-thread port scanner
-# Checks the open ports of a given IP address in the specific port range
-# Built using socket library
-# For multithreading purpose we use Thread library
-
 import socket
 import ipaddress
 import threading
+import argparse
 from queue import Queue
+from termcolor import colored
 
-# Using queue for increased efficiency
 queue = Queue()
-# Store open Ports
-open_ports=[]
+open_ports = []
 
 
-# check if user entered IP is valid
-# We use ipaddress library 
 def is_valid_ip(target):
     try:
         ipaddress.ip_address(target)
@@ -23,97 +16,137 @@ def is_valid_ip(target):
     except ValueError:
         return False
 
-# This is the heart, the mind everything
-# This thing scans for open port
-# We'll be using socket to help us out
-def portscan(port):
-    try:
-        sock=socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((target,port))
-        return True
-    except:
-        return False
 
-# This is used to fill the queue of ports to scan from the user inputed range
-def fill_queue(from_port,to_port):
-    for i in range(from_port,to_port+1):
-        queue.put(i)
+# ScanThread class for handling scanning and banner grabbing
+class ScanThread(threading.Thread):
+    def __init__(self, target, port, timeout, verbose):
+        super().__init__()
+        self.target = target
+        self.port = port
+        self.timeout = timeout
+        self.verbose = verbose
+        self.result = None
+
+    def run(self):
+        try:
+            # Create a socket and connect to the target host and port
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(self.timeout)
+            sock.connect((self.target, self.port))
+
+            # Print only if verbose is enabled
+            if self.verbose:
+                print(colored(f"[+] Port {self.port} is open.", "green"))
+
+            try:
+                # Banner grabbing
+                sock.send(b"GET / HTTP/1.1\r\n\r\n")
+                response = sock.recv(1024).decode("utf-8")
+
+                if self.verbose:
+                    print(f"Banner for port {self.port}: {response.strip()}")
+
+                # Simple vulnerability detection (example)
+                if "FTP" in response and "2.2" in response:
+                    print(colored(f"[!] Vulnerability detected: FTP service version {response.strip()} is vulnerable.", "yellow"))
+
+            except:
+                if self.verbose:
+                    print(f"[-] Unable to get banner for port {self.port}")
+
+            self.result = self.port
+        except:
+            pass
+        finally:
+            sock.close()
 
 
-# This guy here will check if each port is open or not and append the answer to the final list
-def worker():
+def fill_queue(start_port, end_port):
+    for port in range(start_port, end_port + 1):
+        queue.put(port)
+
+
+# Worker function to process the queue
+def worker(target, timeout, verbose):
     while not queue.empty():
         port = queue.get()
-        if (portscan(port)):
-            print("Port {} is open".format(port))
-            open_ports.append(port)
+        scanner = ScanThread(target, port, timeout, verbose)
+        scanner.start()
+        scanner.join()
+        if scanner.result is not None:
+            open_ports.append(scanner.result)
+
+
+def parse_port_range(port_range):
+    if port_range.lower() == 'all':
+        return 1, 65535
+    else:
+        start_port, end_port = map(int, port_range.split('-'))
+        return start_port, end_port
 
 
 
+def main():
+    print(r"""
+       _____      _               _____                   __  ___   ___  _____ 
+      / ____|    | |             / ____|                 /_ |/ _ \ / _ \| ____|
+     | |    _   _| |__   ___ _ _| (___   ___ __ _ _ __    | | | | | | | | |__  
+     | |   | | | | '_ \ / _ \ '__\___ \ / __/ _` | '_ \   | | | | | | | |___ \ 
+     | |___| |_| | |_) |  __/ |  ____) | (_| (_| | | | |  | | |_| | |_| |___) |
+      \_____\__, |_.__/ \___|_| |_____/ \___\__,_|_| |_|  |_|\___/ \___/|____/ 
+             __/ |                                                             
+            |___/                                                                                               
+                          [ Multithread Port Scanner ]
 
-
-#main
-
-# Banner
-print(r"""
-
-   _____      _               _____                   __  ___   ___  _____ 
-  / ____|    | |             / ____|                 /_ |/ _ \ / _ \| ____|
- | |    _   _| |__   ___ _ _| (___   ___ __ _ _ __    | | | | | | | | |__  
- | |   | | | | '_ \ / _ \ '__\___ \ / __/ _` | '_ \   | | | | | | | |___ \ 
- | |___| |_| | |_) |  __/ |  ____) | (_| (_| | | | |  | | |_| | |_| |___) |
-  \_____\__, |_.__/ \___|_| |_____/ \___\__,_|_| |_|  |_|\___/ \___/|____/ 
-         __/ |                                                             
-        |___/                                                                                               
-              [ CyberScan 1005 - Multithread Port Scanner ]
-                     Developed by: GuruVishal1005
-      
-GitHub  : https://github.com/guruvishal1005
-LinkedIn: https://www.linkedin.com/in/guruvishal-sr/
-""")
-print()
-print()
-
-# To get target IP
-target=input("Enter target IP: ")
-print()
-while not is_valid_ip(target):
-    target=input("Enter a valid target IP again: ")
+    """)
     print()
 
-# Getting 2 port range from user 
-port1 = int(input("Enter the starting port to scan: "))
-port2 = int(input("Enter the ending port to scan: "))
-print()
-while not(port1>0 and port2> 0 and port1<port2):
-    # Checking if the entered port is valid and obeys the conditions
-    print("Invalid port entries!! (Port must be > 0 && starting port > ending port) Retry")
-    print()
-    port1 = int(input("Enter the starting port to scan: "))
-    port2 = int(input("Enter the ending port to scan: "))
-    print()
+    # Argument parser setup
+    parser = argparse.ArgumentParser(description="CyberScan 1005 - Fast Multi-threaded Port Scanner")
+    parser.add_argument('-t', '--target', required=True, help='Target IP address')
+    parser.add_argument('-p', '--port-range', default='1-100', help='Port range to scan (e.g., 1-100 or all)')
+    parser.add_argument('-T', '--timeout', default=1.0, type=float, help='Timeout in seconds (default: 1.0)')
+    parser.add_argument('-n', '--num-threads', default=10, type=int, help='Number of threads to use (default: 10)')
+    parser.add_argument('-v', '--verbose', action='store_true', help='Enable verbose output')  # ✅ Added verbose mode
+    args = parser.parse_args()
 
-# Feeding the queue with ports withing given range
-fill_queue(port1,port2)
+    target = args.target
+    if not is_valid_ip(target):
+        print(colored("Invalid IP address. Please enter a valid IP!", "red"))
+        return
 
-# This will contain the threads we create
-thread_list=[]
+    # Parse port range
+    start_port, end_port = parse_port_range(args.port_range)
 
-# Change the range inside the for loop, to specify the amount of threads you want to use
-# I'm using 10 threads because it felt faster
-# This loop is to create the threads and feed it to thread_list 
-for t in range(10):
-    thread = threading.Thread(target=worker)
-    thread_list.append(thread)
+    # Fill queue with ports
+    fill_queue(start_port, end_port)
 
-# Start all the threads
-for thread in thread_list:
-    thread.start()
+    # Create threads
+    thread_list = []
+    for _ in range(args.num_threads):
+        thread = threading.Thread(target=worker, args=(target, args.timeout, args.verbose))
+        thread_list.append(thread)
 
-# Join all the threads
-for thread in thread_list:
-    thread.join()
+    # Start all threads
+    for thread in thread_list:
+        thread.start()
 
-# Print the final list of all open ports for quick view
-print("Open Ports are:", open_ports)
+    # Join all threads
+    for thread in thread_list:
+        thread.join()
 
+    # Display results
+    if open_ports:
+        print(colored(f"\n[+] Open Ports: {open_ports}", "green"))
+    else:
+        print(colored("\n[-] No open ports found.", "red"))
+
+
+# Run the script
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n[!] Scan interrupted by user.")
+    except Exception as e:
+        print(f"[!] Error: {e}")

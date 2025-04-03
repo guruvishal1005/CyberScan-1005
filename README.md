@@ -100,23 +100,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
-## 🤷‍♂️ Why I Built This (A Teenager's Honest Confession)
-
-Look, I'm just a college cybersecurity noob who:
-
-1. **Needed street cred** - Wanted to impress my Discord hacking group (they weren't impressed)  
-2. **Got tired of NMAP** - "But can you make your own scanner?" Challenge accepted!  
-3. **Misunderstood 'network penetration testing'** - Turns out my router doesn't count as "enterprise infrastructure"  
-4. **Wanted to feel cool** - Black terminal > GUI any day (until you get 100 connection timeouts)  
-
-*"My professor said 'think outside the box'... so I built a box scanner instead."*  
-
-⚠️ **Disclaimer**:  
-This tool may:  
-- Make you look 1337 in front of non-tech friends  
-- Annoy your home router  
-- Not actually help with your networking homework (but try telling that to my GitHub commits)  
-
 Built with ❤️, caffeine, and questionable life choices.
 
 

@@ -1,4 +1,4 @@
-# CyberScan 1005 - Multithread Port Scanner 🔍
+# CyberScan 1005 - Multithread Port Scanner
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
@@ -19,15 +19,15 @@
 
 ---
 
-## ✨ Features
+##  Features
 
-- ⚡ Multithreaded scanning for fast results
-- 🔍 Banner grabbing for service detection
-- 🛡️ Simple vulnerability detection
-- ⏳ Customizable timeout and thread count
-- 📢 Verbose mode for detailed output
+-  Multithreaded scanning for fast results
+-  Banner grabbing for service detection
+-  Simple vulnerability detection
+-  Customizable timeout and thread count
+-  Verbose mode for detailed output
 
-## 📥 Installation
+##  Installation
 
 ### Prerequisites
 
@@ -52,7 +52,7 @@ Use the following command to install the required dependencies:
 pip install -r requirements.txt
 ```
 
-## 🛠️ Usage
+##  Usage
 
 Run the script with the following command:
 
@@ -82,21 +82,21 @@ python3 cyberscan-1005.py -t 192.168.1.1 -p 1-500 -n 20
 python3 cyberscan-1005.py -t 192.168.1.1 -p 1-100 -v
 ```
 
-### 📝 Command-Line Options
+###  Command-Line Options
 
-| 🏷️ Option | 📌 Description |
+|  Option |  Description |
 |--------|-------------|
-| `-t, --target` | 🎯 Target IP address |
-| `-p, --port-range` | 🔢 Port range to scan (e.g., 1-100 or 'all') |
-| `-T, --timeout` | ⏱️ Timeout in seconds (default: 1.0) |
-| `-n, --num-threads` | 🧵 Number of threads to use (default: 10) |
-| `-v, --verbose` | 🗣️ Enable verbose output |
+| `-t, --target` |  Target IP address |
+| `-p, --port-range` |  Port range to scan (e.g., 1-100 or 'all') |
+| `-T, --timeout` |  Timeout in seconds (default: 1.0) |
+| `-n, --num-threads` |  Number of threads to use (default: 10) |
+| `-v, --verbose` |  Enable verbose output |
 
-## 📜 License
+##  License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
